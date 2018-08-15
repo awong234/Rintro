@@ -2,6 +2,21 @@
 
 # Don't forget to try the vignettes at the bottom of each help page!
 
+# Setup ----------------------------------------------------------------------------------------------------------------------------------
+
+library(ggplot2) # Load the library for ggplot2 as we will use it later.
+
+# Save data from internal `datasets` package as a new object.
+# This dataset is observations of CO2 uptake by plants originating from
+# different locations, and with different temperature treatments performed.
+CO2 = datasets::CO2
+
+# Remind us what it looks like - three columns of character vectors represented as 'factors', and two numeric columns
+head(CO2)
+
+# More specific information about the structure (str) of the data
+str(CO2)
+
 # Visualization types --------------------------------------------------------------------------------------------------------------------------------------------
 
 ## Plots of data distribution in one dimension ######################
@@ -34,20 +49,34 @@
 # * Plots should be succinct and uncluttered so as to allow easy interpretation of the purpose. 
 # * Plots should be comprehensive, representing the data accurately and fairly.
 
-# Save data from internal `datasets` package as a new object.
-# This dataset is observations of CO2 uptake by plants originating from
-# different locations, and with different temperature treatments performed.
-CO2 = datasets::CO2
+# Make the plot pretty only after you've settled on a chart with the previous characteristics.
 
-# Remind us what it looks like - three columns of character vectors represented as 'factors', and two numeric columns
-head(CO2)
-
-# More specific information about the structure (str) of the data
-str(CO2)
 
 # Visualization 1 ------------------------------------------------------------------------------------------------
 
 # Changing ambient CO2 should affect CO2 uptake - less CO2 available might imply a slower uptake rate. Can we visualize this?
+
+# We have two numeric vectors within the dataframe ; this is a good candidate for a simple point plot
+class(CO2$conc)
+class(CO2$uptake)
+
+plot(x = CO2$conc, y = CO2$uptake) # Commentary:
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+# There's some increase in uptake at the lower end of the concentration
+# gradient, but it doesn't really increase much after ~250 mL/L
+
+# It may imply that CO2 concentration is only a limiting factor at very low
+# levels and does not drive uptake at higher concentrations
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+
+# Format the plot a little better. If the line gets too long, you can add breaks AFTER commas.
+
+plot(x = CO2$conc, y = CO2$uptake, 
+     xlab = 'CO2 Concentration mL/L', 
+     ylab = 'Plant CO2 Uptake umol/m^2 sec', 
+     main = 'Plant CO2 Uptake Under Ambient CO2 Concentration Gradient')
+
+# Do the same in ggplot2
 
 # Visualization 2 ------------------------------------------------------------------------------------------------
 
@@ -59,17 +88,14 @@ str(CO2)
 levels(CO2$Treatment)
 
 # We're interested in the distribution of uptake as it relates to treatment. How can we visualize this?
-# * Points colored by factor
 # * Box plot - grouping along a discrete variable (treatment) and display distribution of data
 # * Density plot with line type determined by factor
+# * Points colored by factor
 
-# Split data frame by treatment. Makes two lists of CO2$uptake separated by treatment.
+# Split data frame by treatment. Makes two lists of CO2$uptake separated by treatment. 
+# Note : if you wrap any assignment with parentheses like below, it will automatically print the object you just assigned.
 (CO2_split = split(CO2$uptake, CO2$Treatment))
 
-
-# Colored points
-plot(CO2_split$nonchilled, col = 'blue')
-points(CO2_split$chilled, col = 'red')
 
 # Plot opens up the plotting window defaulting to the ranges of the data initially passed to plot()
 # Additional points can be added by following plot() with points(), but the window size will not change!
