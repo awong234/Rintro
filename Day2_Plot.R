@@ -49,7 +49,7 @@ str(CO2)
 # * Plots should be succinct and uncluttered so as to allow easy interpretation of the purpose. 
 # * Plots should be comprehensive, representing the data accurately and fairly.
 
-# Make the plot pretty only after you've settled on a chart with the previous characteristics.
+# Explore the data with simpler plots, then make them pretty!
 
 
 # Visualization 1 ------------------------------------------------------------------------------------------------
@@ -59,6 +59,9 @@ str(CO2)
 # We have two numeric vectors within the dataframe ; this is a good candidate for a simple point plot
 class(CO2$conc)
 class(CO2$uptake)
+
+
+# Plot opens up the plotting window defaulting to the ranges of the data initially passed to plot()
 
 plot(x = CO2$conc, y = CO2$uptake) # Commentary:
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
@@ -78,6 +81,47 @@ plot(x = CO2$conc, y = CO2$uptake,
 
 # Do the same in ggplot2
 
+# In ggplot we have geoms that handle different types of plots, and we typically want to use data frames. 
+# Variables are passed into a function `aes()`; these are things related to the data values themselves.
+
+# ggplot2 skeleton is as follows
+
+# Example:
+
+# p = ggplot() +                                                  ### The function to get the plot started ggplot(). Add plot types, or 'geoms' after using the plus (+). 
+                                                                  ### Optionally pass data inside parentheses. Can save to object (as shown), or plot directly without saving (no asssignment).
+
+#   geom_point(data = data, aes(x = x_column_name,                ### Add a layer. Specify the data frame to be used in `data`. Specify VARIABLES within aes(). Specify FIXED characters outside.
+#                               y = y_column_name), color = 'blue') +
+
+#   geom_point(data = other_data, aes(x = x_column_name,          ### Add another layer from different data. NOTICE here that the color is now set to be dependent upon the `z` column in `other_data`.
+#                                     y = y_column_name, 
+#                                     color = z_column_name)) +  
+
+#   geom_text(aes(x = 0, y = 0, label = 'label text'))            ### Add another layer. NOTICE that x and y are technically 'fixed' in this example, but position information almost always goes into aes().
+
+#   ggtitle("Main title") + xlab("X label") + ylab("Y label")     ### Add labels and such; note this doesn't have to come last.
+
+# Make the above plot:
+
+ggplot() + 
+  geom_point(data = CO2, aes(x = conc, y = uptake), color = 'blue') + 
+  ggtitle("Plant CO2 Uptake Under Ambient CO2 Concentration Gradient") + 
+  xlab("CO2 Concentration mL/L") + ylab("Plant CO2 Uptake umol/m^2 sec")
+
+# What if we want color to depend on something, say where the plant came from?
+# We can specify color to depend upon a column in the data frame, but we move
+# the color argument INSIDE aes() now. ggplot automatically adds a legend:
+
+ggplot() + 
+  geom_point(data = CO2, aes(x = conc, y = uptake, color = Type)) + 
+  ggtitle("Plant CO2 Uptake Under Ambient CO2 Concentration Gradient") + 
+  xlab("CO2 Concentration mL/L") + ylab("Plant CO2 Uptake umol/m^2 sec")
+
+# Adds a little more insight - Quebec plants almost always take up more CO2 than MS plants at the same ambient concentration!
+
+
+
 # Visualization 2 ------------------------------------------------------------------------------------------------
 
 # Biological processes are usually temperature mediated. We should expect higher
@@ -96,15 +140,36 @@ levels(CO2$Treatment)
 # Note : if you wrap any assignment with parentheses like below, it will automatically print the object you just assigned.
 (CO2_split = split(CO2$uptake, CO2$Treatment))
 
-
-# Plot opens up the plotting window defaulting to the ranges of the data initially passed to plot()
-# Additional points can be added by following plot() with points(), but the window size will not change!
-
 plot(CO2$Treatment)
 
 # Box plot - 'split' first by treatment and plot
-boxplot(CO2_split_treatment)
+boxplot(CO2_split)
 
-# Plot density
-plot( density(split(CO2$uptake, CO2$Treatment)$chilled) )
-lines( density(split(CO2$uptake, CO2$Treatment)$nonchilled) , linetype)
+# Do the same in ggplot: notice how much simpler it is to separate factors...
+ggplot() + 
+  geom_boxplot(data = CO2, aes(x = Treatment, y = uptake))
+
+# Sometimes good to add the data on as well, for visualization. 
+# Use alpha (transparency) to make it less intrusive and visualize density of data
+ggplot() + 
+  geom_boxplot(data = CO2, aes(x = Treatment, y = uptake)) + 
+  geom_point(data = CO2, aes(x = Treatment, y = uptake), alpha = 0.1)
+
+# Commentary:
+# Chilled plants seem to take up slightly less CO2 (though we haven't tested for significance!)
+
+# Plot density - notice that the window of the first plot cuts off the second! 
+plot( density (CO2_split$chilled) )
+lines( density( CO2_split$nonchilled ) , lty=3)
+
+# Need to set window to all the data first
+
+plot(x = c(-1,60), y = c(0,0.043), type = 'n')
+lines( density( CO2_split$chilled) )
+lines( density( CO2_split$nonchilled ) , lty=3)
+
+# Nice, but it would take a lot less work if it were automatic. Do this in ggplot
+
+ggplot(data = CO2) + 
+  geom_density(aes(x = uptake, linetype = Treatment)) # So much simpler - one command! No splitting, no fiddling with windows.
+
