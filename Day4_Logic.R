@@ -107,7 +107,7 @@ NA == NULL
 # All the operations above Work with vectors - pairwise comparisons; compare a[1] to b[1], a[2] to b[2], etc.
 
 (a = 1:10)
-(b = c(1:5, 7:11))
+(b = 7:17)
 
 a == b # The first five elements are the same, the rest are not
 
@@ -143,7 +143,12 @@ all(a == d)              # Evaluates to TRUE because we are only comparing the V
 
 # A matrix is a bunch of equal-length vectors put together. We can put together a and b from above
 
-matrix(data = c(a,b), nrow = 10, ncol = 2)           # I'm saying the data is a, followed by b, with 10 rows (length of vectors a & b), and 2 columns (two vectors)
+ab_mat = matrix(data = c(a,b), nrow = 10, ncol = 2)           # I'm saying the data is a, followed by b, with 10 rows (length of vectors a & b), and 2 columns (two vectors)
+
+ba_mat = matrix(data = c(b,a), nrow = 10, ncol = 2)           # What if we put it in the other way?
+
+ab_mat
+ba_mat
 
 # Notice that the 
 
