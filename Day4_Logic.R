@@ -1,4 +1,4 @@
-# Intro to logical operations in R
+# Intro to logical operations and subsetting in R
 
 # T/F what are they? ---------------------------------------------------------------------------------------------------
 
@@ -179,7 +179,8 @@ isTRUE(T)
 # A really important part of R, and programming in general
 # Sometimes we want to see, usem or manipulate a part of an object, and not the whole thing. 
 
-# Methods for subsetting - By index
+# Methods for subsetting - By index ------------------------------------------------------------------------------------------
+
 # R begins indexing at 1, and goes to N. Other programming languages start at 0 and go to N-1. Be careful!
 
 a[0]         # There isn't a 0th index in R; integer(0) is R's way of holding an empty object that was set up to be an integer.
@@ -205,11 +206,28 @@ c[1:10]   # No NA
 
 c_long = sample(c, size = 1e5, replace = T)
 
-table(c_long, useNA = 'always') 
+table(c_long, useNA = 'always') # Note that there are about 9000 <NA> values. The argument `useNA` sets an option to count NA values - off by default.
 
 # There are NA's, but it would be really cumbersome to remove them by hand. We
 # want to subset `c_long` to include only the non-empty values. 
 
-# Basic
+# We can subset by finding the indexes of the NA values, using `which`
+
+na.index = which(is.na(c_long))
+
+# If we pass this to c_long as an index, we should only see NA's
+
+c_long[na.index] 
+
+# Methods for subsetting - By index ------------------------------------------------------------------------------------------
+
+# But wait - there's another way to subset, and that's by logical vector. If we pass a vector of true/false to an index, we can 'turn on/off' each index in turn. 
+
+length(a)                             # There are 10 elements in `a`
+logindex = c(rep(T, 5), rep(F,5))     # We need a vector of 10 logical elements. Let's see what happens if we set the first five to TRUE and the last to FALSE
+
+a[logindex]                           # We receive back ONLY those elements that correspond to TRUE in logindex - that is 1:5.
+
+# Notice that on line 216 when we asked for the indexes of the NA values, we also used is.na. Recall that this is a logical test for NA values, and returns a logical vector of 
 
 # Control statements ---------------------------------------------------------------------------------------------------
