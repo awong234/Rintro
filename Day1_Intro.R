@@ -46,8 +46,8 @@ z_new<-as.integer(z) # makes it an integer and adds an L
 
 #structures:Vectors, Matrices,Arrays, Dataframes, Lists
 #maybe save arrays for later?
-aVector<-c(1,3,2.5,2)
-bVector<-aVector*1.3 ; bVector
+aVector<-c(1, 3, 2.5, 2)
+bVector<-aVector*1.3 ; bVector # Note: a semi-colon is functionally equivalent to a carriage return; it will execute the statement after it as a fresh line.
 cVector<-sort(aVector)
 dVector<-rep(1,10)
 eVector<-seq(from=2,to=42,by=4)
