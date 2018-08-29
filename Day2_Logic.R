@@ -15,6 +15,7 @@ class(logivec)
 as.integer(logivec)
 
 # What are logical operations?
+# Most of the operations below are pair-wise, meaning that every vector index is compared to the same index of other vectors.
 
 # LOGICAL NOT (negation of a logical vector)
 
@@ -51,6 +52,7 @@ xor(logivecT, logivecF)
 
 # Mathematical equality
 
+# Is `2 + 2 = 5` a true statement?
 2 + 2 == 5
 
 5 == sqrt(25)
@@ -89,7 +91,7 @@ bignum == bignum
 is.na(NA)
 is.null(NULL)
 
-# Don't try to use direct comparison though!
+# Don't try to use direct comparison though! Rstudio will display a warning here.
 
 NA == NA
 NULL == NA
@@ -104,10 +106,14 @@ NA == NULL
 
 # Vector operations --------------------------------------------------------------------------------------------------------------
 
-# All the operations above Work with vectors - pairwise comparisons; compare a[1] to b[1], a[2] to b[2], etc.
+# All the operations above Work with vectors - pairwise comparisons; 
+# compare a[1] to b[1], 
+#         a[2] to b[2], 
+#         a[3] to b[3], etc.
 
+# Set values for a & b
 (a = 1:10)
-(b = 7:17)
+(b = c(1:5, 11:15))
 
 a == b # The first five elements are the same, the rest are not
 
@@ -126,18 +132,21 @@ identical(a,a)
 # values! Note, if there's an attribute like rownames that doesn't match up,
 # identical will return FALSE!
 
-d = a                    # c startss off the same as a
+d = a                    # d startss off the same as a
+identical(a,d)           # d is identical to a at this point
+
 names(d) = letters[1:10] # Set name attribute for each element of c
 d                        # Each element (numbers) has a name attribute (letters) above it.
 
-identical(a,a)
-identical(a,d)
+identical(a,a)           # a is still identical to a
+identical(a,d)           # d is now NOT identical to a
 
 # While `d` still has the same values as `a`, the OBJECTS are not completely the same. 
 
-# Use all() alongside comparisons
+# Use all() alongside comparisons to test for value equality
+# all() asks, are all the elements in the vector contained true?
 
-all(a == d)              # Evaluates to TRUE because we are only comparing the VALUES. Be careful with identical(), all.equal().
+all(a == d)              # Evaluates to TRUE because we are only comparing the VALUES. Be careful with identical() and all.equal().
 
 # Matrix operations --------------------------------------------------------------------------------------------------------------
 
@@ -150,7 +159,8 @@ ba_mat = matrix(data = c(b,a), nrow = 10, ncol = 2)           # What if we put i
 ab_mat
 ba_mat
 
-# Notice that the 
+# Notice that the order of the data matters. a is in the first column in ab_mat, whereas b is in the first column in ba_mat.
+# It may feel odd that the software fills in data by columns because we are accustomed to writing left-to-right
 
 # Tests of structure --------------------------------------------------------------------------------------------------------------
 
