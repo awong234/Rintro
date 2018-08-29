@@ -148,6 +148,12 @@ identical(a,d)           # d is now NOT identical to a
 
 all(a == d)              # Evaluates to TRUE because we are only comparing the VALUES. Be careful with identical() and all.equal().
 
+# Similar to all() is any(), which asks within the contained vector, is ANY value true? 
+
+# Will return TRUE with at least one true in the contained vector. Will only return false if ALL are false.
+
+any(a == b)
+
 # Matrix operations --------------------------------------------------------------------------------------------------------------
 
 # A matrix is a bunch of equal-length vectors put together. We can put together a and b from above
@@ -160,7 +166,12 @@ ab_mat
 ba_mat
 
 # Notice that the order of the data matters. a is in the first column in ab_mat, whereas b is in the first column in ba_mat.
-# It may feel odd that the software fills in data by columns because we are accustomed to writing left-to-right
+# It may feel odd that the software fills in data by columns because we are accustomed to writing left-to-right.
+
+# R defaults to filling in what's called column-major order, but it is ultimately irrelevant to the end-user because filling in by column-major order is the same as filling in by row-major order of the transpose matrix. The concern here rests squarely with the underlying memory structures.
+
+
+
 
 # Tests of structure --------------------------------------------------------------------------------------------------------------
 
@@ -183,6 +194,12 @@ isTRUE(F)
 isTRUE(T)
 
 # Most often used in control structures
+
+
+
+
+
+
 
 # Subsetting/indexing -----------------------------------------------------------------------------------------------------------
 
@@ -221,13 +238,26 @@ table(c_long, useNA = 'always') # Note that there are about 9000 <NA> values. Th
 # There are NA's, but it would be really cumbersome to remove them by hand. We
 # want to subset `c_long` to include only the non-empty values. 
 
-# We can subset by finding the indexes of the NA values, using `which`
+# We can subset by finding the indices of the NA values, using `which`; we get all the corresponding indices
 
-na.index = which(is.na(c_long))
+(na.index = which(is.na(c_long)))
 
 # If we pass this to c_long as an index, we should only see NA's
 
-c_long[na.index] 
+c_long[na.index]
+
+# If the output is truncated, how do we know it's all NA's? Use a logical test
+
+all(is.na(c_long[na.index]))
+
+# Or use table() if it's not continuous values
+
+table(c_long[na.index], useNA = 'always')
+
+
+
+
+
 
 # Methods for subsetting - By index ------------------------------------------------------------------------------------------
 
@@ -238,6 +268,35 @@ logindex = c(rep(T, 5), rep(F,5))     # We need a vector of 10 logical elements.
 
 a[logindex]                           # We receive back ONLY those elements that correspond to TRUE in logindex - that is 1:5.
 
-# Notice that on line 216 when we asked for the indexes of the NA values, we also used is.na. Recall that this is a logical test for NA values, and returns a logical vector of 
+# Notice that on line 216 when we asked for the indices of the NA values, we also used is.na. Recall that this is a logical test for NA values, and returns a logical vector of TRUE's corresponding to NA positions, and FALSES otherwise.
+
+# This is the better way to subset over supplying indices themselves, because you can always ask for the inverse.
+
+(na.index = is.na(c_long)) # Skip the which() statement for the index positions, and just get a logical vector of same length as c_long
+
+c_clean = c_long[!na.index]          # If we want only those values that AREN'T NA, then we can just invert this logical vector with a logical NOT
+
+# An easy way to clean matrices and data.frames
+
+c_long_mat = cbind(c_long, c_long + 1)                 # Make a new matrix with missing values
+
+c_long_mat_index = complete.cases(c_long_mat)          # Get only those rows with 'complete cases', or no NA's. The result is a logical vector with the same length as the number of rows in the original matrix
+
+c_long_mat_clean = c_long_mat_index[c_long_mat_index,] # Subset to obtain those rows without ANY NA's.
+
+# Always prove to yourself that it worked! 
+
+# EXERCISE 
+
+# Devise two tests to see that c_clean is indeed clean of NA values.
+
+# Clean the airquality dataset
+
+airquality %>% head
+
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+
 
 # Control statements ---------------------------------------------------------------------------------------------------
+
