@@ -37,7 +37,7 @@ logivec | logivecF # First and third
 # LOGICAL XOR (which elements have one, and ONLY one TRUE)
 
 xor(logivec, logivecT) # The second and fourth positions; see them together to see why
-cat(logivec, '\n', logivecT)
+cat(logivec, '\n', logivecT) # What's this? A way to print data neatly to the console, in a fairly raw format. Similar to concatenate in Excel
 
 # What should we get if we run xor(logivecT, logivecF) ?
 xor(logivecT, logivecF)
@@ -276,13 +276,17 @@ a[logindex]                           # We receive back ONLY those elements that
 
 c_clean = c_long[!na.index]          # If we want only those values that AREN'T NA, then we can just invert this logical vector with a logical NOT
 
+# Test this
+
+summary(c_clean)                     # No NA's
+
 # An easy way to clean matrices and data.frames
 
 c_long_mat = cbind(c_long, c_long + 1)                 # Make a new matrix with missing values
 
 c_long_mat_index = complete.cases(c_long_mat)          # Get only those rows with 'complete cases', or no NA's. The result is a logical vector with the same length as the number of rows in the original matrix
 
-c_long_mat_clean = c_long_mat_index[c_long_mat_index,] # Subset to obtain those rows without ANY NA's.
+c_long_mat_clean = c_long_mat[c_long_mat_index,] # Subset to obtain those rows without ANY NA's.
 
 # Always prove to yourself that it worked! 
 
@@ -293,6 +297,10 @@ c_long_mat_clean = c_long_mat_index[c_long_mat_index,] # Subset to obtain those 
 # Clean the airquality dataset
 
 airquality %>% head
+
+# CO2 dataset exercises
+
+CO2 %>% head
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
