@@ -140,8 +140,6 @@ levels(CO2$Treatment)
 # Note : if you wrap any assignment with parentheses like below, it will automatically print the object you just assigned.
 (CO2_split = split(CO2$uptake, CO2$Treatment))
 
-plot(CO2$Treatment)
-
 # Box plot - 'split' first by treatment and plot
 boxplot(CO2_split)
 
@@ -173,3 +171,8 @@ lines( density( CO2_split$nonchilled ) , lty=3)
 ggplot(data = CO2) + 
   geom_density(aes(x = uptake, linetype = Treatment)) # So much simpler - one command! No splitting, no fiddling with windows.
 
+# Exercises -----------------------------------------------------------------------------
+
+# Use the trees dataset. Observe the structure (str) of the dataset and plot all three variables on one chart.
+
+# Make your plot pretty! Change the colors to something that appeals you.
