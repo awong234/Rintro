@@ -475,3 +475,115 @@ repeat(
 # FOREACH ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 if(!require(foreach)){install.packages('foreach')}
+
+# Operates mostly similar to for(), but handles output automatically, defaulting to a list for every index
+
+foreach(i = 1:10) %do%{
+  print(i)
+}
+
+# Let's recall the data we simulated earlier
+
+output = matrix(data = NA, nrow = 20, ncol = 10)
+
+means = seq(0, length.out = ncol(output))
+sd = 1
+
+set.seed(1)
+
+for(i in 1:ncol(output)){
+  
+  mean = means[i]
+  
+  output[,i] = rnorm(n = nrow(output), mean = mean, sd = sd)
+  
+}
+
+# To do the same here, we don't even need to create the output matrix. We do need to specify that the output from each 
+
+# Set a seed to compare them.
+
+set.seed(1)
+
+output_foreach = foreach(i = 1:10, .combine = cbind) %do% {
+  
+  out = rnorm(n = 20, mean = means[i], sd = sd)
+  
+}
+
+all(output == output_foreach)
+
+# They are the same thing, but foreach is a little simpler to write. 
+
+# The drawbacks of foreach are that it is a little more difficult to implement
+# inside another function; you can't use the standard debugger to step through
+# and see what is going wrong. 
+
+# The pros of foreach are greater than the drawbacks, in my opinion:
+# Parallelizing is made extremely simple. For instance, the above can be done as such:
+
+if(!require(doParallel)){install.packages('doParallel')}
+
+registerDoParallel(cores = 4) # Register four cores to operate 
+
+output_foreach_par = foreach(i = 1:10, .combine = cbind) %dopar% { # Do the following 4 indices at a time
+  out = rnorm(n = 20, mean = means[i], sd = sd)
+}
+
+registerDoSEQ() # Turn off parallel to free up resources. Always good to do after parallel operations, doesn't hurt.
+
+# Such an example is NOT efficient, but if you have a really long operation per index that are independent, foreach will speed things up tremendously.
+# However, there is rather expensive overhead in setting up all the CPU's and sending them information that doesn't exist in serial operations.
+
+# Parallelize when:
+# * Operations each individually take hours
+# * Operations are independent
+# * Many indices that are better done simultaneously.
+
+# Times NOT to parallelize:
+# * Short operation per index (on the order of seconds to minutes)
+# * Not a whole lot of indices
+# * Operations depend on previous indices
+
+# Functions ---------------------------------------------------------------------------------------------------------------------
+
+# Not really logic, but good to know if time allows and follows naturally from control flow statements.
+
+# In R, everything is an object, even a function. Try typing a function name without parentheses
+
+xor
+
+# We can see the function definition, because it's stored as a particular object. 
+
+# We can define our own functions. What is a function? A function is a bunch of
+# lines of code that is executed when the function is called, optionally taking
+# arguments.
+
+# Run the following to define a function. What does this one do?
+
+test_func = function(a, b){
+  
+  do_something = a + b
+  
+  return(do_something)
+  
+}
+
+test_func(a = 1, b = 2)
+
+# The function sums a and b, and returns that output.
+# We can put anything we want into the function to execute. 
+
+# Benefits of using a function:
+# * No side effects. Notice that `do_something` isn't in our environment. That means no matter what objects we make in the function, we can't accidentally rewrite things in our global environment. Good safety feature! 
+# * Use with foreach or other parallelizing functions to perform a function many times at once with different inputs
+# * Tuck functions away in their own script for neatness. Also, can use Rstudio debugger!
+# * Debugger: insert `browser()` anywhere in the function to debug; ONLY if sourced from another script!
+
+
+# Example of debugging
+
+source('functions.R') # Notice that we have a new function, generate integers
+
+summarizePois(mean = 10, length_out = 100, debug = T)
+
