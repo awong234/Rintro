@@ -51,30 +51,36 @@ is.logical(TRUE)
 z<-10*4^(1/3) #what class is z?
 z_new<-as.integer(z) # makes it an integer and adds an L
 
-#structures:Vectors, Matrices,Arrays, Dataframes, Lists
-
+#structures:Vectors, Matrices, Dataframes, Lists
 aVector<-c(1,3,2.5,2)
 bVector<-aVector*1.3 ; bVector
+aVector<-c(1, 3, 2.5, 2)
+bVector<-aVector*1.3 ; bVector # Note: a semi-colon is functionally equivalent to a carriage return; it will execute the statement after it as a fresh line.
 cVector<-sort(aVector)
 dVector<-rep(1,10)
 eVector<-seq(from=2,to=42,by=4)
 
+#Matrix: entries are all one type
 aMatrix<-matrix(data = c(4,13), nrow = 3, ncol = 2, byrow = FALSE, dimnames = NULL) # 2-dimensional
-#anArray<-array(data=c(3,15),dim=c(2,2,2)) # multi-dimensional
 
-aDataframe<-data.frame()
+#vs. Dataframe: columns can be of different types
+aDataframe<-data.frame() #create empty dataframe
 people <- c("Alex", "Barb", "Carl") # col 1
 ages <- c(19, 29, 39)  # col 2
+aDataframe <- data.frame(people, ages)  # create
 colnames(aDataframe)
 rownames(aDataframe)
+aDataframe$people # a dollar sign extracts columns of that name
+aDataframe$height<-c("short","tall","tall")
+str(aDataframe)
+aDataframe_asMatrix<-as.matrix(aDataframe)
 
-aDataframe <- data.frame(people, ages)  # create
-aList<-list(aVector,aMatrix,anArray,aDataframe)
-aList<-list(aVector=aVector,aMatrix=aMatrix,anArray=anArray,aDataframe=aDataframe)
-
+#Lists
+aList<-list(aVector,aMatrix,aDataframe)
+aList<-list(aVector=aVector,aMatrix=aMatrix,aDataframe=aDataframe)
 
 #Basic Data Manipulation ####
-#index, extract,subset
+#index,extract,subset
 length(aVector)
 aVector[3] # square brackets extract from vectors, matrices
 aMatrix[4,3] # comma to differentiate between rows and columns
@@ -82,27 +88,32 @@ dim(aMatrix)
 aMatrix[2,1] 
 aMatrix[1:3,1] #what's another way to get the same answer?
 aList[[1]] # double square brackets extract from a list
-aDataframe$people # a dollar sign extracts columns of that name 
 
 rbind(aVector,bVector)
 cbind(aVector,bVector)
 
-
 # Reading and Writing ###
 datasets::CO2
-?CO2
-dim(CO2)
 head(CO2)
 View(CO2)
 summary(CO2)
+CO2<-CO2
 write.csv(CO2,file="CO2.csv")
 C02<-read.csv(CO2.csv,header=TRUE)
 
+### HALP ###
+?summary() # {package}
+# Google queries
+
 #Exercises ####
-# 1) What is the uptake rate of the 54th plant?
-# 2) What is the average uptake rate of Mississippi plants that were chilled?
-# 3) How many plants had greater uptake rates than 30 umol/m^2?
+# 1) Extract from aList the third element in the first item 
+# 2) How many entries are in CO2, and what features are being recorded? 
+
+# 2) What is the uptake rate of the 54th plant? What are the units of the uptake rate? 
+# 3) What is the average uptake rate of Mississippi plants that were chilled?
 # 4) What is the total uptake rate of all the plants?
-# 5) Change the concentration values to be factors rather than values
-# 6) 
+
+# 5) Change the concentration values to be of type 'factor' rather than of type 'numeric'
+# 6) What is the 'type' for uptake? Change it to type 'integer'. 
+# 7) What is the maximum uptake rate? Lowest uptake rate?
 
