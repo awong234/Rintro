@@ -290,11 +290,11 @@ c_long_mat_clean = c_long_mat[c_long_mat_index,] # Subset to obtain those rows w
 
 # Always prove to yourself that it worked! 
 
-# EXERCISE 
+# EXERCISES
 
-# Devise two tests to see that c_clean is indeed clean of NA values.
+# Devise two tests to see that c_clean is indeed clean of NA values. ------------------------------------------------
 
-# Clean the airquality dataset
+# Clean the airquality dataset --------------------------------------------------------------------------------------
 
 airquality %>% head
 
@@ -302,9 +302,47 @@ airquality %>% head
 
 CO2 %>% head
 
+# Formatting data - Categorical covariates --------------------------------------------------------------------------------------
+
+# Often, covariates in a model are categorical, meaning they take on a few discrete values. The way to format this data for analysis is called dummy coding. 
+# Load the dummy coded data
+
+load('dummyCode.Rdata') # The object is named 'dummyCode'. Note that objects are named as they are saved, and .Rdata files can contain multiple objects, so don't assign it to an object here!
+
+head(dummyCode)
+
+# Load the adirondack habitats data, and using logical expressions, obtain a dummy-coded matrix. 
+
+load('adk_habitats.Rdata')
+
+# The object `habSummary` has a value for every single grid cell in the Adirondacks. 
+# There are four levels; 0, 1, 2, 3, 4, representing categories for 'other', 'conifer', 'deciduous', 'mixed', and 'wetland' specifically.
+
+str(habSummary)
+
+# Exercise: Format the data to obtain the same matrix as dummyCode. Devise a test or two to verify that it is correct.
+
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 
 
 # Control statements ---------------------------------------------------------------------------------------------------
 
+# Control statements will execute parts of the script conditionally, in pre-defined loops, or indefinitely until a condition is met.
+
+# There are several main control statements
+
+# if(test){do_this}  -  use to execute lines of code conditionally on a logical test passed as an argument. Braces are used to bind the part of the script to be run.
+
+c
+(test = any(is.na(c)))
+
+if(test){
+  
+  c = c[!is.na(c)]
+  
+}
+
+
+
+# 
