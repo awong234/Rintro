@@ -4,7 +4,7 @@
 
 # Setup ----------------------------------------------------------------------------------------------------------------------------------
 
-library(ggplot2) # Load the library for ggplot2 as we will use it later.
+if(!require(ggplot2)){install.packages(ggplot2)} # Load the library for ggplot2 as we will use it later.
 
 # Save data from internal `datasets` package as a new object.
 # This dataset is observations of CO2 uptake by plants originating from
@@ -101,6 +101,8 @@ plot(x = CO2$conc, y = CO2$uptake,
 #   geom_text(aes(x = 0, y = 0, label = 'label text'))            ### Add another layer. NOTICE that x and y are technically 'fixed' in this example, but position information almost always goes into aes().
 
 #   ggtitle("Main title") + xlab("X label") + ylab("Y label")     ### Add labels and such; note this doesn't have to come last.
+
+# Don't try to memorize all of the geom's; you'll become familiar with them through experience.
 
 # Make the above plot:
 
