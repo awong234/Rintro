@@ -559,6 +559,18 @@ xor
 # lines of code that is executed when the function is called, optionally taking
 # arguments.
 
+# What is the structure of a function? We've been using them all along:
+
+# Function_name( argument1 = DEFAULT_VALUE, argument2 = DEFAULT_VALUE_2, ..., argumentN) { 
+#       body_of_function
+#       return(output)
+# }
+# 
+
+# Arguments can be set with default values, or not. 
+# If there exists something in the body of the function that is not supplied as an argument, the function will look to the global environment for it.
+# Good practice to return exactly what you want.
+
 # Run the following to define a function. What does this one do?
 
 test_func = function(a, b){
@@ -587,3 +599,4 @@ source('functions.R') # Notice that we have a new function, generate integers
 
 summarizePois(mean = 10, length_out = 100, debug = T)
 
+# Exercise : Write your own function to summarize a vector of numbers.
