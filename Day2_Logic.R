@@ -296,11 +296,16 @@ c_long_mat_clean = c_long_mat[c_long_mat_index,] # Subset to obtain those rows w
 
 # Clean the airquality dataset --------------------------------------------------------------------------------------
 
-airquality %>% head
+head(airquality)
 
-# CO2 dataset exercises
+# CO2 dataset exercises ---------------------------------------------------------------------------------------------
 
-CO2 %>% head
+head(CO2)
+
+# Identify the maximum uptake for the Quebecoise plants, using subsetting and max().
+
+# Compare this to the maximum uptake for Mississippian plants
+
 
 # Formatting data - Categorical covariates --------------------------------------------------------------------------------------
 
@@ -332,17 +337,141 @@ str(habSummary)
 
 # There are several main control statements
 
+# IF and ELSE ----------------------------------------------------------------------------------------------------
+
 # if(test){do_this}  -  use to execute lines of code conditionally on a logical test passed as an argument. Braces are used to bind the part of the script to be run.
 
 c
+
 (test = any(is.na(c)))
 
-if(test){
+if(test){ # If there are any NA's in c
   
-  c = c[!is.na(c)]
+  c[!is.na(c)] # Remove them
   
 }
 
+# There is an implicit else here, which is 'do nothing'. Explicitly, this looks like
 
+if(test){ # If there are any NA's in c
+  
+  c = c[!is.na(c)] # Remove them
+  
+} else {
+  
+  NULL
+  
+}
+
+# There is a function ifelse(), but use this for very simple expressions.
+
+ifelse(test = test, yes = c[!is.na(c)], no = NULL)         # The argument structure of this makes long conditional scripts cumbersome.
 
 # 
+
+
+# LOOPS -----------------------------------------------------------------------------------------------------------------------------------------------
+
+# FOR -----------------------------------------------------------------------------------------------------------------------------------------------
+
+# This is the simplest loop. It states "For all elements in some index, do the following script that many times.
+
+for(i in 1:10){
+  print("Hello!")
+}
+
+# Note that i is an object that can be used like any other. USE this to change the behavior of the for loop through elements of some structure!
+
+output = matrix(data = NA, nrow = 20, ncol = 10)
+
+means = seq(0, length.out = ncol(output))
+sd = 1
+
+for(i in 1:ncol(output)){
+  
+  mean = means[i]
+  
+  output[,i] = rnorm(n = nrow(output), mean = mean, sd = sd)
+  
+}
+
+# Exercise : We just simulated data with means increasing by 1 per column. Take the column means to see if we did this correctly
+
+# # # 
+
+# We can use if() statements inside for loops. What should we see in the following loop?
+
+for(i in 1:10){
+  
+  if(i == 5){
+    print(i)
+  } 
+  
+}
+
+# We can decide to skip elements conditionally using `next`. NOW what should we see?
+
+for(i in 1:10){
+  
+  if(i == 5){
+    next
+  } else {
+      print(i)
+    }
+  
+}
+
+# WHILE -----------------------------------------------------------------------------------------------------------------------------------------------
+
+# Perform a section of script over and over until a condition is met.
+# Calculate pi to 1 digits using monte carlo method
+
+test = FALSE
+points_in = 0
+points_out = 0
+
+set.seed(1) # Set a reproducible outcome. Anything (random) run after this will always produce the same output.
+
+rpois(n = 5, lambda = 10) # 8, 10, 7, 11, 14; always
+
+while(!test){
+  
+  point = c(runif(n = 1, min = -0.5, max = 0.5),
+             runif(n = 1, min = -0.5, max = 0.5))
+  
+  point_dist = sqrt(point[1]^2 + point[2]^2)
+  
+  if(point_dist < 0.5){
+    points_in = points_in + 1
+  } else {
+    points_out = points_out + 1
+  }
+  
+  message(paste0("Points in: ", points_in, "\nPoints out: ", points_out))
+  
+  pi_hat = 4 * (points_in / (points_in + points_out))
+  
+  message(paste0("pi_hat = ", pi_hat))
+  
+  test = abs(pi_hat - pi) < 0.001
+  
+}
+
+# REPEAT -----------------------------------------------------------------------------------------------------------------------------------------------
+
+# Repeat does something repeatedly until a condition is met. This is very similar to 'while', except this is more useful in doing something indefinitely.
+# I have a repeat function that uploads files to a cloud drive every 15 minutes; there's no terminating condition.
+
+# The example here does implement an end condition, using `break`
+
+repeat(
+  {
+    sample = rpois(n = 1, lambda = 8)
+    print(sample)
+    if(sample > 10){break}
+  }
+)
+
+# FOREACH ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+if(!require(foreach)){install.packages('foreach')}
