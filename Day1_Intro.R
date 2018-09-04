@@ -47,7 +47,7 @@ is.numeric(4)
 is.integer(4)
 is.double(4) #why?
 is.integer(4L) #takes up less space
-is.logical(TRUE)
+is.logical(10)
 z<-10*4^(1/3) #what class is z?
 z_new<-as.integer(z) # makes it an integer and adds an L
 
@@ -56,7 +56,7 @@ aVector<-c(1,3,2.5,2)
 bVector<-aVector*1.3 ; bVector
 aVector<-c(1, 3, 2.5, 2)
 bVector<-aVector*1.3 ; bVector # Note: a semi-colon is functionally equivalent to a carriage return; it will execute the statement after it as a fresh line.
-cVector<-sort(aVector)
+cVector<-sort(aVector,decreasing=FALSE);cVector
 dVector<-rep(1,10)
 eVector<-seq(from=2,to=42,by=4)
 
@@ -83,23 +83,26 @@ aList<-list(aVector=aVector,aMatrix=aMatrix,aDataframe=aDataframe)
 #index,extract,subset
 length(aVector)
 aVector[3] # square brackets extract from vectors, matrices
-aMatrix[4,3] # comma to differentiate between rows and columns
+aMatrix[2,2] # comma to differentiate between rows and columns
 dim(aMatrix)
 aMatrix[2,1] 
 aMatrix[1:3,1] #what's another way to get the same answer?
+aMatrix[c(1,2,3),1]
 aList[[1]] # double square brackets extract from a list
 
 rbind(aVector,bVector)
 cbind(aVector,bVector)
+cbind(aVector,c(1,3,3,3,bVector))
 
 # Reading and Writing ###
 datasets::CO2
 head(CO2)
+tail(CO2)
 View(CO2)
 summary(CO2)
 CO2<-CO2
 write.csv(CO2,file="CO2.csv")
-C02<-read.csv(CO2.csv,header=TRUE)
+C02<-read.csv("CO2.csv",header=TRUE)
 
 ### HALP ###
 ?summary() # {package}
@@ -107,13 +110,31 @@ C02<-read.csv(CO2.csv,header=TRUE)
 
 #Exercises ####
 # 1) Extract from aList the third element in the first item 
+firstItem<-aList[[1]]
+firstItem[3]
+aList[[1]][3]
+
+
 # 2) How many entries are in CO2, and what features are being recorded? 
+str(CO2)
+dim(CO2)
 
 # 2) What is the uptake rate of the 54th plant? What are the units of the uptake rate? 
-# 3) What is the average uptake rate of Mississippi plants that were chilled?
-# 4) What is the total uptake rate of all the plants?
+CO2$uptake[54] ; "umol/m^2 sec"
 
+# 3) What is the average uptake rate of Mississippi plants that were chilled?
+mean(CO2[])
+ChilledPlants<-CO2[CO2$Treatment=="chilled",]
+MSplants<-ChilledPlants[ChilledPlants$Type=="Mississippi",]
+mean(MSplants$uptake)
+
+# 4) What is the total uptake rate of all the plants?
+sum(CO2$uptake)
 # 5) Change the concentration values to be of type 'factor' rather than of type 'numeric'
+CO2$conc<-as.factor(CO2$conc)
 # 6) What is the 'type' for uptake? Change it to type 'integer'. 
-# 7) What is the maximum uptake rate? Lowest uptake rate?
+class(CO2$uptake) ; CO2$uptake<-as.integer(CO2$uptake)
+# 7) What is the maximum uptake rate? Lowest uptake rate?'
+max(CO2$uptake); min(CO2$uptake)
+summary(CO2)
 
