@@ -175,4 +175,7 @@ ggplot(data = CO2) +
 
 # Use the trees dataset. Observe the structure (str) of the dataset and plot all three variables on one chart.
 
-# Make your plot pretty! Change the colors to something that appeals you.
+# Make your plot pretty! Change the background colors, and at least one other feature, to something that appeals you.
+
+# using the adk_elevation dataset, plot the population distribution of Adirondacks elevation, and the sample distribution, in one graph.
+# Modify the alpha (transparency) levels appropriately (if applicable)
