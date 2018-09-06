@@ -595,7 +595,7 @@ test_func(a = 1, b = 2)
 
 # Example of debugging
 
-source('functions.R') # Notice that we have a new function, generate integers
+source('functions.R') # Notice that we have a new function, a function summarizing random integers.
 
 summarizePois(mean = 10, length_out = 100, debug = T)
 
