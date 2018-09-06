@@ -474,6 +474,7 @@ repeat(
 
 # FOREACH ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+# This will automatically install the package for you if you don't have it.
 if(!require(foreach)){install.packages('foreach')}
 
 # Operates mostly similar to for(), but handles output automatically, defaulting to a list for every index
@@ -597,6 +598,6 @@ test_func(a = 1, b = 2)
 
 source('functions.R') # Notice that we have a new function, a function summarizing random integers.
 
-summarizePois(mean = 10, length_out = 100, debug = T)
+summarizePois(mean = 5, n_numbers = 20, n_replicates = 10, debug = T)
 
 # Exercise : Write your own function to summarize a vector of numbers.
