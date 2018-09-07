@@ -34,9 +34,7 @@ pnorm(8,mean=10,sd=2)
 abline(v=8)
 
 ### Models and Regressions ####
-# continous response variable
-# continuous and/or categorical predictor variables
-
+# response variable and predictor variables, and find a pattern.
 # look at data 
 head(CO2)
 ggplot(data=CO2,aes(x=CO2$conc,y=CO2$uptake))+
