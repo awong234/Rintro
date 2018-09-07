@@ -19,8 +19,16 @@ var(CO2[CO2$conc=="95",]$uptake)
 mode <- function(x) { # to calculate the most common value
   tab <- table(x) # count the frequency of each unique value
   index.of.max<-nnet:::which.is.max(tab) #find the index of the value with max freq
-  as.integer(names(tab)[nnet:::which.is.max(tab)]) # turn the value into an integer
+  as.numeric(names(tab)[nnet:::which.is.max(tab)]) # turn the value into an integer
 }
+
+# Alternative way to define mode using base functions - very similar logic
+
+Mode <- function(x) {
+  ux <- unique(x) # What are the unique values? 
+  return(ux[which.max(tabulate(match(x, ux)))]) # Which one of the unique values has the most occurrences? First one encountered is spit out, so ties are not handled elegantly.
+}
+
 mode(CO2$uptake)
 
 ### Probability Distributions ####
