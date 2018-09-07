@@ -45,6 +45,9 @@ ggplot(data=CO2,aes(x=CO2$conc,y=CO2$uptake))+
 
 
 #create linear regression models
+# lm - linear model assumes that error around observed data are normally distributed around 0
+# create a linear model that minimizes difference between observed and line
+
 CO2.mod <- lm(data=CO2,uptake ~ conc) # regression formula
 names(CO2.mod) #various output
 plot(CO2.mod$residuals) # are these uniformly distributed, to support use of a linear model?
