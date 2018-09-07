@@ -4,7 +4,7 @@
 
 # Setup ----------------------------------------------------------------------------------------------------------------------------------
 
-if(!require(ggplot2)){install.packages(ggplot2)} # Load the library for ggplot2 as we will use it later.
+if(!require(ggplot2)){install.packages("ggplot2")} # Load the library for ggplot2 as we will use it late.r
 
 # Save data from internal `datasets` package as a new object.
 # This dataset is observations of CO2 uptake by plants originating from
@@ -107,7 +107,7 @@ plot(x = CO2$conc, y = CO2$uptake,
 # Make the above plot:
 
 ggplot() + 
-  geom_point(data = CO2, aes(x = conc, y = uptake), color = 'blue') + 
+  geom_point(data = CO2, aes(x = conc, y = uptake), color = 'violet') + 
   ggtitle("Plant CO2 Uptake Under Ambient CO2 Concentration Gradient") + 
   xlab("CO2 Concentration mL/L") + ylab("Plant CO2 Uptake umol/m^2 sec")
 
@@ -155,6 +155,8 @@ ggplot() +
   geom_boxplot(data = CO2, aes(x = Treatment, y = uptake)) + 
   geom_point(data = CO2, aes(x = Treatment, y = uptake), alpha = 0.1)
 
+
+
 # Commentary:
 # Chilled plants seem to take up slightly less CO2 (though we haven't tested for significance!)
 
@@ -177,7 +179,38 @@ ggplot(data = CO2) +
 
 # Use the trees dataset. Observe the structure (str) of the dataset and plot all three variables on one chart.
 
+# Variables are girth, height, and volume; volume is dependent upon girth and height.
+# Use ggplot, and geom_point, or find another way to represent these data if you want.
+
+ggplot(data = trees) + 
+  geom_point(aes(x = Girth, y = Height, color = Volume)) + 
+  theme(axis.title.x = element_text(angle = 45), 
+        axis.text.x = element_text(angle = 45) ,
+        legend.background = element_rect(fill = 'gray50'))
+
+
+
+library(plotly)
+
+plot_ly(data = trees) %>% 
+  add_markers(x = ~Girth, y = ~Height, z = ~Volume)
+
 # Make your plot pretty! Using the `theme()` layer, change the background colors, and at least one other feature, to something that appeals you.
 
 # using the adk_elevation dataset, plot the population distribution of Adirondacks elevation, and the sample distribution, in one graph.
 # Modify the alpha (transparency) levels appropriately (if applicable)
+
+ggplot() + 
+  geom_density(data = adk_elevation, aes(x = Elevation, color = Type), alpha = 0.2) + 
+  scale_color_manual(values = c('red', 'blue'))
+
+ggplot() + 
+  geom_boxplot(data = adk_elevation, aes(x = Type, y = Elevation, fill = Type)) + 
+  coord_flip()
+
+ggplot() + 
+  geom_violin(data = adk_elevation, aes(x = Type, y = Elevation))
+
+ggplot() + 
+  geom_point(data = adk_elevation, aes(x = Type, y = Elevation), position = position_jitter(width = 0.2), alpha = 0.1)
+             
