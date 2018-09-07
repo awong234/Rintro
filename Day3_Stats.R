@@ -1,67 +1,100 @@
-### Day 3###########################################
-# Some basic Statistical analyses covering:
-# probability distributions
-# Linear regression	
-# Anova 
-# t test
-# this is not a lecture on Stats, but a lecture on Stats in R!
+### Summary of Days Before
+# Day 1: Object type, assignment, basic subsetting and extraction, 
+# Day 2: Logic, loops, and functions
+# Day 3: Plotting with base and ggplot2
 
-library(ggplot2)
+### Day 4###########################################
+# Some basic statistical analyses
+# this is not a lecture on Stats, but a lecture on Stats in R!
+# probability distributions
+# Linear regression, model selection
+# Anova 
+
 #### General summary statistics ####
 summary(CO2)
 mean(CO2$uptake)
 median(CO2[CO2$conc=="95",]$uptake)
 sd(CO2[CO2$conc=="95",]$uptake)
 var(CO2[CO2$conc=="95",]$uptake)
-
-### Models and Regressions ####
-# first plot data
-plot(CO2$conc,CO2$uptake)
-          
-# linear regression assumptions: normality -  qq plot
-qqnorm(CO2$uptake, pch = 1)
-qqline(CO2$uptake, col = "red", lwd = 2)
-
-#create a linear regression model
-CO2.mod <- lm(uptake ~ conc+Treatment, # regression formula
-              data=CO2)
-names(CO2.mod)
-summary(CO2.mod)
-names(CO2.mod)
-predictCO2<-data.frame()
-predict(CO2.mod,predictCO2)
-
-#or do an anova
-CO2.aov2 <- aov(uptake ~ conc+Treatment, data = CO2)
-summary(CO2.aov2)
+mode <- function(x) { # to calculate the most common value
+  tab <- table(x) # count the frequency of each unique value
+  index.of.max<-nnet:::which.is.max(tab) #find the index of the value with max freq
+  as.integer(names(tab)[nnet:::which.is.max(tab)]) # turn the value into an integer
+}
+mode(CO2$uptake)
 
 ### Probability Distributions ####
-set.seed (234) # is your best friend for reproducibility 
-runif(100,0,1)
+set.seed (234) # is your best friend for reproducibility. Initializes a pseudorandom number generator.
+rnorm(n=100,mean=10,sd=2) #generate 100 values from a normal distribution with mean 10 and sd 2
 ?runif()
-rnorm(n=20,mean=10,sd=2)
-pnorm(1.4,mean=1.8,sd=0.5)
+#R has many distributions in base package
+#https://stat.ethz.ch/R-manual/R-devel/library/stats/html/Distributions.html
+plot(density(rnorm(n=100,mean=10,sd=2))) #what happens if we change n?
+pnorm(8,mean=10,sd=2)
+abline(v=8)
 
-
-# 1) do a linear regression on the dataset::trees with girth and height and volume, with whatever hypothesis you can come up with
-# 3) create the following scenario: a friend bets he will get no more than 5 heads in  20 coin flips.
-# except they do not know that the coin is heavy and heads are favored 80% to tails (20%). What is
-# the probility he can get 5? What is the probability he'll get more more than 7? use the dbinom and pbinom functions
-dbinom(5, size=20, prob=0.2) 
-1-pbinom(7, size=20,prob=0.2)
-
-# You ordered 50 seedlings and expect based on lit review that they will be 20 cm in 6 weeks; tall enough for your first experiment.
-# Based on a simple linear regression, which you also plot, are you optimistic that they will get to 25cm?
-
-write.csv(seedlingGrowth,"seedlingGrowth.csv")
-
-lm(Height~Day,data=seedlingGrowth)
-ggplot(seedlingGrowth,aes(x=Day,y=Height)) + 
+### Models and Regressions ####
+# response variable and predictor variables, and find a pattern.
+# look at data 
+head(CO2)
+ggplot(data=CO2,aes(x=CO2$conc,y=CO2$uptake))+
   geom_point()+
-  geom_smooth(method="lm",fullrange=TRUE)+
-  scale_x_continuous(limits = c(0, 50))
-  scale_y_continuous(limits = c(0, 50))
-  
-#You can get your money back if you do a t-test and can suggest your plants didnt grow to 13 cm by week 4.
-model<-lm(Height~Day,data=seedlingGrowth)
-t.test(seedlingGrowth[seedlingGrowth$Day<29 &seedlingGrowth$Day>25,2],rep(13,50))
+  geom_smooth(method="lm",se=TRUE,fullrange=TRUE,level=0.95)
+
+
+#create linear regression models
+# lm - linear model assumes that error around observed data are normally distributed around 0
+# create a linear model that minimizes difference between observed and line
+
+CO2.mod <- lm(data=CO2,uptake ~ conc) # regression formula
+names(CO2.mod) #various output
+plot(CO2.mod$residuals) # are these uniformly distributed, to support use of a linear model?
+summary(CO2.mod) 
+
+CO2.mod2 <- lm(data=CO2,uptake ~ conc+Type) # regression formula
+summary(CO2.mod2)
+
+ggplot(data=CO2,aes(x=CO2$conc,y=CO2$uptake,color=Type))+
+  geom_point()+
+  geom_smooth(method="lm",se=TRUE,fullrange=TRUE,level=0.95)
+
+# compare models with AIC: Akaike's Information Criterion
+# goodness of fit but penalty for number of parameters to discourage overfitting
+AIC(CO2.mod,CO2.mod2) # which model is better/has lower AIC?
+
+#predict new values of uptake for other concentrations
+predictCO2<-data.frame(conc = rep(seq(1000,1490,10),2),Type=c(rep("Quebec",50),rep("Mississippi",50)))
+newPredictions<-predict(CO2.mod2,predictCO2)
+
+### Significance testing #####
+# or do an ANOVA to look at differences in
+# is variation in uptake due to variation in conc, type, or both?
+CO2.aov2 <- aov(uptake ~ conc+Type, data = CO2)
+summary(CO2.aov2)
+
+
+### Exercises
+# Day 4: Statistics
+  # 1) do a linear regression on the dataset::trees with girth and height and volume, with whatever hypothesis you can come up with
+  # 2) based on your regression, predict new values of your response variable given new values of your explanatory variables
+  # 3) create a vector called "age" that has 20 random values drawn from a uniform distribution from 21 to 30.
+# Day 1: Assignment, subsetting
+  # 4) Look at the sleep dataset from datasets:sleep 
+  # 5) How many extra hours, on average did everyone sleep?
+  # 6) How many extra hours, on average, did people given Drug 1 sleep? 
+  # 7) Use the cbind() function to add "age" from Exercise 3 to the datasets:sleep
+  # 8) Create another column to sleep, called 'More' and fill it with NA's. 
+  # 8) Create a list where the first item is the ID column, the second item is the drug column, the third item is the extra hours of sleep, and the fourth item is the age
+# Day 2: Logic, Loops, Functions
+  #9) Use the for loop to go through each row(i.e., person) of your sleep dataset. 
+  #   If the person slept more hours (positive value for 'extra'), assign them a 1 in the 'More' column
+  #   Else, assign them a 0 in the 'More' column   
+# Day 3: Plotting
+  #10 Use this skeleton to plot the distribution of sleep per group.
+ggplot()+
+  geom_density(data=,aes(,col=))
+  #11 Color the distributions and give them some transparency
+ggplot()+
+  geom_density(data=,aes(,col=,fill=),alpha=)
+  #12 Maually change the group colors to magenta and orange
+
