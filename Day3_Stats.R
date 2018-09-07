@@ -80,6 +80,10 @@ newPredictions<-predict(CO2.mod2,predictCO2)
 CO2.aov2 <- aov(uptake ~ conc+Type, data = CO2)
 summary(CO2.aov2)
 
+ggplot(data = CO2) + 
+  geom_point(aes(x = conc, y = uptake)) + 
+  geom_smooth(aes(x = conc, y = uptake), method = 'lm', formula = y ~ log(x))
+
 
 ### Exercises
 # Day 4: Statistics
