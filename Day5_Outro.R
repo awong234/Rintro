@@ -20,7 +20,7 @@
 
 out=matrix(data=NA,nrow=200,ncol=2);for(i in 1:2){out[,i]=rpois(n=200,lambda=3)}
 
-# This is much clearer - carriage returns make reading code easier; Excel can't do this!
+# The following is much clearer - carriage returns make reading code easier; Excel can't do this!
 
 out = matrix(data = NA, nrow = 200, ncol = 2)
 
@@ -34,7 +34,7 @@ for(i in 1:2){
 
 # R does not require any specific indentation structure, so the following are equivalent:
 
-# Number 1
+# Implementation 1
 # An array is just a 'bind' of some matrices of the same dimension bound across a third dimension. Dimensions are not limited to 3. 
 # See package 'abind' for intuitive tools for combining matrices.
 out = array(data = NA, dim = c(3,3,3)) 
@@ -47,7 +47,7 @@ out[i,j,k] = rpois(n = 1, lambda = 10)
 }
 }
 
-# Number 2
+# Implementation 2
 out_2 = array(data = NA, dim = c(3,3,3))
 set.seed(1)
 for(i in 1:3){
@@ -62,6 +62,8 @@ for(i in 1:3){
 identical(out, out_2)
 
 # OR add some additional carriage returns so it's not so cluttered
+
+# Implementation 3
 
 out_3 = array(data = NA, dim = c(3,3,3))
 
@@ -104,23 +106,23 @@ identical(out, out_2, out_3)
 # Reflow long expressions . . . 
 
 theta = exp(
-  beta_1 * big_matrix[,1] + 
-  beta_2 * big_matrix[,2] + 
-  beta_3 * big_matrix[,3] + 
-  beta_4 * big_matrix[,4] + 
-  beta_5 * big_matrix[,5] + 
-  beta_6 * big_matrix[,6] 
+  beta_1 * covariate_matrix[,1] + 
+  beta_2 * covariate_matrix[,2] + 
+  beta_3 * covariate_matrix[,3] + 
+  beta_4 * covariate_matrix[,4] + 
+  beta_5 * covariate_matrix[,5] + 
+  beta_6 * covariate_matrix[,6] 
   )
 
 # . . . so that you can see the components easier than if they were on one line. 
 
-theta = exp(beta_1 * big_matrix[,1] + beta_2 * big_matrix[,2] + beta_3 * big_matrix[,3] + beta_4 * big_matrix[,3] + beta_5 * big_matrix[,3] + beta_6 * big_matrix[,3])
+theta = exp(beta_1 * covariate_matrix[,1] + beta_2 * covariate_matrix[,2] + beta_3 * covariate_matrix[,3] + beta_4 * covariate_matrix[,3] + beta_5 * covariate_matrix[,3] + beta_6 * covariate_matrix[,3])
 
 
-# Say you have a functionw with a lot of arguments, potentially with long names
+# Say you have a function with a lot of arguments, potentially with long names
 
 test_fn = function(argument_1, argument_2, argument_3, argument_4, argument_5, argument_6){
-  s
+  
   sum(argument_1, argument_2, argument_3, argument_4, argument_5, argument_6)
   
 }
@@ -203,7 +205,7 @@ for(i in 1:3){
   
 }
 
-# DO NOT DO THIS. THIS IS NOT GOOD PRACTICE.
+# DO NOT DO THIS. THIS IS NOT GOOD PRACTICE. https://stackoverflow.com/questions/2679193/how-to-name-variables-on-the-fly
 
 # If you want to add all the matrices together, what do you do? Well now you
 # have to write out ALL of their names:
@@ -229,11 +231,11 @@ for(i in 1:3){
 # polluted your directory with 1,000,000 little files instead of one bigger one.
 # It's not a good way to live.
 
-# But there are better ways. GENERALLY SPEAKING 
+# But there are better ways. GENERALLY SPEAKING:
 
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
-# Use the simplest structure that accommodates all of your related outputs into one object  #
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #  
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# Use the simplest data structure that accommodates all of your related outputs into one object #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 # Most of the time this will be a list. Instead of the above, you instead do:
 
@@ -248,7 +250,7 @@ for(i in 1:3){
 # Good way
 Reduce(f = `+`, x = out_list) # ?Reduce to see what this does.
 
-# Bad way. Same result, but you will easily make mistakes and can't accomplish this with more than a few items.
+# Bad way. Same result, but you will more easily make mistakes and can't accomplish this with more than a few items.
 (matrix1 + matrix2 + matrix3)
   
 # Now you can see where you go wrong if you have 1 million matrices to sum.
@@ -262,13 +264,58 @@ out_array = array(data = NA, dim = c(3,3,3)) # This is an array with 3 matrices 
 for(i in 1:3){ # For matrix i
   
   # Set matrix i equal to the following . . . 
-  out_array[,,i] = matrix(data = seq(i, (9+i-1)), nrow = 3, ncol =3)
+  out_array[ , , i] = matrix(data = seq(i, (9+i-1)), nrow = 3, ncol =3) 
+  
+  # Notice I left row and column index blank. This is because I want it to take the values of the i'th matrix, and fill it in by row and column of the i'th matrix in the array.
+  # Play with arrays to see how they function. Try subsetting a specific column of all matrices, and prove to yourself that it is the correct one.
   
 }
 
 # Now we sum the matrices, again, not caring how many are contained.
 
 apply(X = out_array, MARGIN = c(1,2), FUN = sum)
+
+# Which one is fastest? Let's try with a bigger set of matrices
+
+# Assignment
+for(i in 1:20){
+  
+  # Assign something to a name that you can define programmatically, here referenced by loop index `i`.
+  assign(x = paste0('matrix', i), value = matrix(data = seq(i,(9+i-1)), nrow = 3, ncol = 3))
+  
+}
+
+# List
+out_list = list()
+
+for(i in 1:20){
+  out_list[[i]] = matrix(data = seq(i,(9+i-1)), nrow = 3, ncol = 3)
+}
+
+# Array 
+
+
+for(i in 1:20){ # For matrix i
+  
+  # Set matrix i equal to the following . . . 
+  out_array[ , , i] = matrix(data = seq(i, (9+i-1)), nrow = 3, ncol =3) 
+  
+}
+
+
+(item = microbenchmark::microbenchmark("Array Sum" = apply(X = out_array, MARGIN = c(1,2), FUN = sum),
+                               "Reduce Sum" = Reduce(f = `+`, x = out_list),
+                               "Bad Sum" = matrix1 + matrix2 + matrix3 + matrix4 + matrix5 + matrix6 + matrix7 + matrix8 + matrix9 + matrix10 + matrix11 + matrix12 + matrix13 + matrix14 + matrix15 + matrix16 + matrix17 + matrix18 + matrix19 + matrix20)
+)
+
+microbenchmark::autoplot.microbenchmark(item)
+
+# "The bad way" might be fastest, but notice we didn't have to change the very short command to run the sum again, whereas we had to change the sum for the bad way. The miniscule time we saved was offset by the extra several seconds re-typing everything.
+
+# Get rid of matrixN items - uses regular expression to isolate specific string patterns.
+
+rm(list = ls(pattern = 'matrix\\d'))
+
 
 # Vectorization ---------------------
 
@@ -306,8 +353,9 @@ colMeans(x)
 microbenchmark::autoplot.microbenchmark(item)
 
 # The `apply` family of functions is often faster than loops as well, but not
-# always! In this example, the manual functions are basically saying the same
-# thing, but they are nowhere near as fast as the optimized function.
+# always! In this example, the manual function and the apply function are
+# basically saying the same thing, but they are nowhere near as fast as the
+# optimized function.
 
 # It's actually slower in this example.
 
@@ -363,12 +411,25 @@ microbenchmark::autoplot.microbenchmark(item)
 # Best option is to find an optimized function to do what you want.
 
 # Next best is to use `apply`, or as in `manual_colMeans`, use the function with respect to the
-# whole column.
+# whole column. There are easy methods for parallelizing `apply` functions for extra speed.
+
+# Use `for` loops for simple, quick operations, where the time expense of setting up parallel operations is high relative to the `for` loop. If your operation takes hours to days, consider parallel operations.
+
+# https://www.r-bloggers.com/faster-higher-stonger-a-guide-to-speeding-up-r-code-for-busy-people/
 
 # Microbenchmark can test your functions' speed on small datasets, so that you're not losing time on the large ones.
 
 
 # Other tips -----------------------------------------------------------------------------
+
+# Regular expressions are important to learn if you are doing any manipulation
+# of character vectors, file directories, etc. 
+
+# Regular expressions are used with most all string search functions in R.
+
+# ?substr ; ?gsub ; ?grep ; ?dir ; ?ls ; dozens more
+
+# If you find yourself in a situation where you need it, I would use https://regex101.com/ to test and learn
 
 # Microsoft R Open (MRO) --------------------------------------
 
@@ -389,7 +450,6 @@ microbenchmark::autoplot.microbenchmark(item)
 # Restart R Session - I find it best to run your script fresh from time to time.
 # This way you can be sure it will run on other people's computers from start to
 # finish.
-
 # ctrl-shift-F10         command-shift-F10
 
 # Show all keyboard shortcuts
