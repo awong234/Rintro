@@ -4,12 +4,14 @@
 # Best practices
 # Other tips
 
-# Code styling, organization -------------------------------------------------------------
+# Code styling, organization -------------------------------------------------------------------------------------------
 
 # COMMENT COMMENT COMMENT
+
 # There is nothing more important than comments.
-# Make them easy to read, and organize them using headers.
+# Make them easy to read, and organize them using headers. Make headers by repeating '-', '#', or '=' a minimum of 4 times.
 # Any comments are better than none. You WILL forget what you did years hence, and others will not know.
+
 # COMMENT COMMENT COMMENT 
 
 # Carriage returns for organization ---------------------
@@ -30,10 +32,12 @@ for(i in 1:2){
 
 # Indentation for organization ---------------------
 
-# R does not keep track of indentation, so the following two are equivalent:
+# R does not require any specific indentation structure, so the following are equivalent:
 
 # Number 1
-out = array(data = NA, dim = c(3,3,3))
+# An array is just a 'bind' of some matrices of the same dimension bound across a third dimension. Dimensions are not limited to 3. 
+# See package 'abind' for intuitive tools for combining matrices.
+out = array(data = NA, dim = c(3,3,3)) 
 set.seed(1)
 for(i in 1:3){
 for(j in 1:3){
@@ -366,9 +370,27 @@ microbenchmark::autoplot.microbenchmark(item)
 
 # Other tips -----------------------------------------------------------------------------
 
-# Useful keyboard shortcuts - used most often
+# Microsoft R Open (MRO) --------------------------------------
+
+# This version of R comes with math libraries for speeding up certain
+# operations, but it also constrains package installations to come from a
+# specific snapshot of CRAN from a specific date. 
+
+# Therefore, if you have MRO version 3.4.4, everyone else with that version is
+# GUARANTEED to have interoperability with your scripts. Using ordinary R, your
+# packages are updated as you command, so you may have a mix of old and new
+# packages. New users will have brand-new packages, and so it is not guaranteed
+# that scripts will function exactly alike.
+
+# Useful keyboard shortcuts - used most often -----------------
 
 # Windows                Mac 
+
+# Restart R Session - I find it best to run your script fresh from time to time.
+# This way you can be sure it will run on other people's computers from start to
+# finish.
+
+# ctrl-shift-F10         command-shift-F10
 
 # Show all keyboard shortcuts
 # alt-shift-k            option-shift-k
@@ -409,5 +431,34 @@ microbenchmark::autoplot.microbenchmark(item)
 # Insert %>%
 # ctrl-shift-m           command-shift-m
 
-# Edit all names of a variable
+# Edit all names of a variable in scope
 # ctrl-alt-shift-m       ?
+
+# Example # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+
+# What's this for? If you find that a variable is just not named the way you
+# want it, instead of manually re-setting all the names, just use this to do
+# them all at once. A few caveats:
+
+# You can highlight `wrong_name` and change all of the names of that variable
+# simultaneously, but ONLY within the function's scope. IF you do it outside a
+# function, you will be changing everything in the document (unless it's inside
+# a function)
+
+# Highlight `wrong_name` outside the function. You will see all instances of it.
+# If you press ctrl-alt-shift-m, you will highlight only the ones outside the
+# function. You can start typing it to `right_name` if you wish.
+
+wrong_name
+
+wrong_name
+
+# If you highlight `wrong_name` inside the function, whether the argument or the call to the argument inside, you can change every appearance of it WITHIN the function.
+
+test_fn = function(x, y, wrong_name){
+  
+  z = x + y - wrong_name
+  
+}
+
+# End example # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
