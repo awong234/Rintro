@@ -76,6 +76,8 @@ for(i in 1:3){ # Annotate what this loop represents
 
 # Using returns to unclutter things ---------------------
 
+# Rstudio will take care of a LOT of formatting for you. Easiest to accept its conventions.
+
 # Normal
 
 3 + 6
@@ -130,16 +132,48 @@ test_fn(argument_1 = 1,
         argument_3 = 5,
         argument_4 = 7,
         argument_5 = 9,
-        argument_6 = 11)
+        argument_6 = 11
+        )
 
 
 # Best practices -------------------------------------------------------------------------
 
 # Object names ---------------------
 
+# Name format ----------------------
+
 # This is very subjective; take with grains of salt.
 
 # Typical naming formats 
+
+# camelCase
+# names have no spaces or symbols separating letters; instead, new words after the first get Capitalized.
+
+aSquareMatrix = matrix(data = 1:9, nrow = 3, ncol = 3)
+
+# snake_case 
+# Generally no capitalization, but words are instead separated by underscores.
+
+a_square_matrix = matrix(data = 1:9, nrow = 3, ncol = 3)
+
+# Evidence is mixed as to which one is 'better'.
+
+# http://www.cs.kent.edu/~jmaletic/papers/ICPC2010-CamelCaseUnderScoreClouds.pdf
+# http://citeseerx.ist.psu.edu/viewdoc/download;jsessionid=376163100A8301ECD04E9CECBE0F834F?doi=10.1.1.158.9499&rep=rep1&type=pdf
+# https://softwareengineering.stackexchange.com/questions/27264/naming-conventions-camelcase-versus-underscore-case-what-are-your-thoughts-ab
+
+
+# MAIN TAKEAWAY is be consistent, but try them out and be open to any naming convention. 
+
+# The names of objects -------------------------
+
+# Object names should be sufficiently descriptive to deduce what it is.
+
+a_square_matrix = matrix(data = 1:9, nrow = 3, ncol = 3)
+
+# . . . is better than . . . 
+
+m = matrix(data = seq(1,9), nrow = 3, ncol = 3)
 
 # Vectorization ---------------------
 
