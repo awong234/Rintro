@@ -12,7 +12,7 @@
 # Any comments are better than none. You WILL forget what you did years hence, and others will not know.
 # COMMENT COMMENT COMMENT 
 
-# Returns for organization ---------------------
+# Carriage returns for organization ---------------------
 
 # Why is this line problematic?
 
@@ -32,6 +32,7 @@ for(i in 1:2){
 
 # R does not keep track of indentation, so the following two are equivalent:
 
+# Number 1
 out = array(data = NA, dim = c(3,3,3))
 set.seed(1)
 for(i in 1:3){
@@ -42,6 +43,7 @@ out[i,j,k] = rpois(n = 1, lambda = 10)
 }
 }
 
+# Number 2
 out_2 = array(data = NA, dim = c(3,3,3))
 set.seed(1)
 for(i in 1:3){
@@ -52,11 +54,12 @@ for(i in 1:3){
     }# . . . are easier . . .
   }# . . . to match to start
 
+# They are the same
 identical(out, out_2)
 
 # OR add some additional carriage returns so it's not so cluttered
 
-out_2 = array(data = NA, dim = c(3,3,3))
+out_3 = array(data = NA, dim = c(3,3,3))
 
 set.seed(1)
 
@@ -66,7 +69,7 @@ for(i in 1:3){ # Annotate what this loop represents
     
     for(k in 1:3){ # So your readers and your future self know.
       
-      out_2[i,j,k] = rpois(n = 1, lambda = 10)
+      out_3[i,j,k] = rpois(n = 1, lambda = 10)
       
     }
     
@@ -74,23 +77,23 @@ for(i in 1:3){ # Annotate what this loop represents
   
 }
 
-# Using returns to unclutter things ---------------------
+# They're all the same.
+identical(out, out_2, out_3)
 
-# Rstudio will take care of a LOT of formatting for you. Easiest to accept its conventions.
+# Using returns to unclutter things ---------------------
 
 # Normal
 
 3 + 6
 
 # Any hanging operator followed by a carriage return will take the next line to
-# complete the command. These are silly examples, but they are very useful.
+# complete the command. These are silly examples, but the concept is very useful.
 
 3 + 
   6
 
 3 >
   6
-
 
 # Operators include math operations, logical operations, %>%, commas, parentheses, braces, brackets
 
@@ -113,7 +116,7 @@ theta = exp(beta_1 * big_matrix[,1] + beta_2 * big_matrix[,2] + beta_3 * big_mat
 # Say you have a functionw with a lot of arguments, potentially with long names
 
 test_fn = function(argument_1, argument_2, argument_3, argument_4, argument_5, argument_6){
-  
+  s
   sum(argument_1, argument_2, argument_3, argument_4, argument_5, argument_6)
   
 }
@@ -175,15 +178,105 @@ a_square_matrix = matrix(data = 1:9, nrow = 3, ncol = 3)
 
 m = matrix(data = seq(1,9), nrow = 3, ncol = 3)
 
+# Try not to have names too long
+
+a_square_matrix_that_is_one_to_nine_with_three_rows = matrix(data = seq(1,9), nrow = 3, ncol = 3)
+
+# While you can use autocomplete, it's just not pretty or helpful.
+
+# Assignment of variables to objects -------------
+
+# You may be tempted to save everything into their own object. 
+# You'll look up how to programatically assign names to objects . . .
+
+# Say you have a number of analyses. You may try something like this; I know
+# that to me it was intuitive at one point:
+
+for(i in 1:3){
+  
+  # Assign something to a name that you can define programmatically, here referenced by loop index `i`.
+  assign(x = paste0('matrix', i), value = matrix(data = seq(i,(9+i-1)), nrow = 3, ncol = 3))
+  
+}
+
+# DO NOT DO THIS. THIS IS NOT GOOD PRACTICE.
+
+# If you want to add all the matrices together, what do you do? Well now you
+# have to write out ALL of their names:
+
+matrix1 + matrix2 + matrix3
+
+# What if you have 1,000,000 matrices? You can't do it. What if you changed the naming convention between saves? Now it's impossible.
+
+# What if you want to save them all? Now you have to loop through the index again, 
+
+for(i in 1:3){
+  save(list = paste0('matrix', i), file = paste0('matrix',i, '.Rdata'))
+}
+
+# Now what if you want to load them all? You have to identify all of the save files in your directory and loop again.
+
+for(i in 1:3){
+  load(paste0('matrix', i,'.Rdata'))
+}
+
+# HERE'S THE PROBLEM: If you add just one more output, you have to go back and
+# change all of the loop indices. If you have 1,000,000 analyses, you now have
+# polluted your directory with 1,000,000 little files instead of one bigger one.
+# It's not a good way to live.
+
+# But there are better ways. GENERALLY SPEAKING 
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+# Use the simplest structure that accommodates all of your related outputs into one object  #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #  
+
+# Most of the time this will be a list. Instead of the above, you instead do:
+
+out_list = list()
+
+for(i in 1:3){
+  out_list[[i]] = matrix(data = seq(i,(9+i-1)), nrow = 3, ncol = 3)
+}
+
+# We can add them all together easily, without caring how many elements are inside
+
+# Good way
+Reduce(f = `+`, x = out_list) # ?Reduce to see what this does.
+
+# Bad way. Same result, but you will easily make mistakes and can't accomplish this with more than a few items.
+(matrix1 + matrix2 + matrix3)
+  
+# Now you can see where you go wrong if you have 1 million matrices to sum.
+
+# We can use an even simpler structure.
+
+# We can identify that all these matrices are of the same dimension and use an array, which is just a matrix in 3+ dimensions.
+
+out_array = array(data = NA, dim = c(3,3,3)) # This is an array with 3 matrices of 3 rows and 3 columns, but it goes dim( nrow, ncol, nmatrices )
+
+for(i in 1:3){ # For matrix i
+  
+  # Set matrix i equal to the following . . . 
+  out_array[,,i] = matrix(data = seq(i, (9+i-1)), nrow = 3, ncol =3)
+  
+}
+
+# Now we sum the matrices, again, not caring how many are contained.
+
+apply(X = out_array, MARGIN = c(1,2), FUN = sum)
+
 # Vectorization ---------------------
 
 # Where possible, use vectorized, optimized functions instead of loops.
 
 # Column means
 
-n = 1e2
+n = 30000
+ncol = 3
+nrow = n / ncol
 
-x = matrix(data = rnorm(n = n^2, mean = 0, sd = 1), nrow = n, ncol = n)
+x = matrix(data = rnorm(n = n, mean = 0, sd = 1), nrow = nrow, ncol = ncol)
 
 manual_colMeans = function(x){
   
@@ -203,13 +296,16 @@ manual_colMeans = function(x){
 
 colMeans(x)
 
-(item = microbenchmark::microbenchmark("Manual" = manual_colMeans(x), "Optimized" = colMeans(x), times = 1e2))
+(item = microbenchmark::microbenchmark("Manual" = manual_colMeans(x), 
+                                       "Optimized" = colMeans(x), times = 1e3))
 
 microbenchmark::autoplot.microbenchmark(item)
 
 # The `apply` family of functions is often faster than loops as well, but not
 # always! In this example, the manual functions are basically saying the same
 # thing, but they are nowhere near as fast as the optimized function.
+
+# It's actually slower in this example.
 
 manual_colMeans_apply = function(x){
   
@@ -221,9 +317,51 @@ manual_colMeans_apply = function(x){
 
 (item = microbenchmark::microbenchmark("Manual" = manual_colMeans(x), 
                                        "Manual (apply)" = manual_colMeans_apply(x), 
-                                       "Optimized" = colMeans(x), times = 1e2))
+                                       "Optimized" = colMeans(x), times = 1e3))
 
 microbenchmark::autoplot.microbenchmark(item)
+
+# When is apply faster? When your operation is considering full vectors instead of elements.
+# Take this extra slow for loop
+
+manual_slow_colMeans = function(x){
+  
+  out = vector(mode = 'numeric', length = ncol(x))
+  
+  for(j in 1:ncol(x)){
+    
+    row_sum = 0
+    
+    for(i in 1:nrow(x)){
+      
+      row_sum = row_sum + x[i,j]
+      
+    }
+    
+    out[j] = row_sum / nrow(x)
+    
+  }
+  
+  return(out)
+  
+}
+
+(item = microbenchmark::microbenchmark("Manual (slow)" = manual_slow_colMeans(x), 
+                                       "Manual" = manual_colMeans(x), 
+                                       "Manual (apply)" = manual_colMeans_apply(x), 
+                                       "Optimized" = colMeans(x), times = 1e3))
+
+microbenchmark::autoplot.microbenchmark(item)
+
+# As much as possible, avoid looping over elements of a vector when the function
+# applied to each element is the same. 
+
+# Best option is to find an optimized function to do what you want.
+
+# Next best is to use `apply`, or as in `manual_colMeans`, use the function with respect to the
+# whole column.
+
+# Microbenchmark can test your functions' speed on small datasets, so that you're not losing time on the large ones.
 
 
 # Other tips -----------------------------------------------------------------------------
