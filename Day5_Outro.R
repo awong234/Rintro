@@ -6,13 +6,29 @@
 
 # Code styling, organization -------------------------------------------------------------------------------------------
 
-# COMMENT COMMENT COMMENT
-
 # There is nothing more important than comments.
 # Make them easy to read, and organize them using headers. Make headers by repeating '-', '#', or '=' a minimum of 4 times.
 # Any comments are better than none. You WILL forget what you did years hence, and others will not know.
+# COMMENT COMMENT COMMENT
 
-# COMMENT COMMENT COMMENT 
+# Things at the beginning of your script -----------------------------------
+
+# Get and set your working directory, automatically or manually
+scriptName<-"/Day5_Outro"
+setWDHere = function(){
+  sourcePath<-rstudioapi::getSourceEditorContext()$path[1] # loc of this script
+  sourceLoc<-strsplit(sourcePath,scriptName)[[1]][1] # get the parent folder
+  setwd(sourceLoc) # set the wd to the parent folder
+}
+setWDHere()
+
+# Libraries: put all libraries at the top of the script rather than throughout
+if(!require(ggplot2)){install.packages("ggplot2")}
+
+# at the top, define and assign parameters that change that create different datasets 
+# this way you can reuse code
+threshold<-0.75
+sigma<-10
 
 # Carriage returns for organization ---------------------
 
@@ -47,7 +63,9 @@ out[i,j,k] = rpois(n = 1, lambda = 10)
 }
 }
 
-# Implementation 2
+# Implementation 2 :indentation
+# either use the automatic indentation, or be consistent between tab vs. spaces
+
 out_2 = array(data = NA, dim = c(3,3,3))
 set.seed(1)
 for(i in 1:3){
@@ -422,6 +440,15 @@ microbenchmark::autoplot.microbenchmark(item)
 
 # Other tips -----------------------------------------------------------------------------
 
+# Use different scripts for different purposes. Dont create a massive script.
+# For example: 
+# A script that loads data: load.R
+# A script that cleans data: cleaning.R
+# A script that has all your functions that you can then source in: func.R
+# A script that analyses: do.R
+# A script that does the post processing: postProcessing.R
+
+
 # Regular expressions are important to learn if you are doing any manipulation
 # of character vectors, file directories, etc. 
 
@@ -522,3 +549,7 @@ test_fn = function(x, y, wrong_name){
 }
 
 # End example # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+
+# Reference cards 
+# https://cran.r-project.org/doc/contrib/Short-refcard.pdf
+# https://cran.r-project.org/doc/contrib/YanchangZhao-refcard-data-mining.pdf
