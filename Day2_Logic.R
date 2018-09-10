@@ -290,17 +290,42 @@ c_long_mat_clean = c_long_mat[c_long_mat_index,] # Subset to obtain those rows w
 
 # Always prove to yourself that it worked! 
 
-# EXERCISE 
+# EXERCISES
 
-# Devise two tests to see that c_clean is indeed clean of NA values.
+# Devise two tests to see that c_clean is indeed clean of NA values. ------------------------------------------------
 
-# Clean the airquality dataset
+# Clean the airquality dataset --------------------------------------------------------------------------------------
 
-airquality %>% head
+head(airquality)
 
-# CO2 dataset exercises
+# CO2 dataset exercises ---------------------------------------------------------------------------------------------
 
-CO2 %>% head
+head(CO2)
+
+# Identify the maximum uptake for the Quebecoise plants, using subsetting and max().
+
+# Compare this to the maximum uptake for Mississippian plants
+
+
+# Formatting data - Categorical covariates --------------------------------------------------------------------------------------
+
+# Often, covariates in a model are categorical, meaning they take on a few discrete values. The way to format this data for analysis is called dummy coding. 
+# Load the dummy coded data
+
+load('dummyCode.Rdata') # The object is named 'dummyCode'. Note that objects are named as they are saved, and .Rdata files can contain multiple objects, so don't assign it to an object here!
+
+head(dummyCode)
+
+# Load the adirondack habitats data, and using logical expressions, obtain a dummy-coded matrix. 
+
+load('adk_habitats.Rdata')
+
+# The object `habSummary` has a value for every single grid cell in the Adirondacks. 
+# There are four levels; 0, 1, 2, 3, 4, representing categories for 'other', 'conifer', 'deciduous', 'mixed', and 'wetland' specifically.
+
+str(habSummary)
+
+# Exercise: Format the data to obtain the same matrix as dummyCode. Devise a test or two to verify that it is correct.
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
@@ -308,3 +333,271 @@ CO2 %>% head
 
 # Control statements ---------------------------------------------------------------------------------------------------
 
+# Control statements will execute parts of the script conditionally, in pre-defined loops, or indefinitely until a condition is met.
+
+# There are several main control statements
+
+# IF and ELSE ----------------------------------------------------------------------------------------------------
+
+# if(test){do_this}  -  use to execute lines of code conditionally on a logical test passed as an argument. Braces are used to bind the part of the script to be run.
+
+c
+
+(test = any(is.na(c)))
+
+if(test){ # If there are any NA's in c
+  
+  c[!is.na(c)] # Remove them
+  
+}
+
+# There is an implicit else here, which is 'do nothing'. Explicitly, this looks like
+
+if(test){ # If there are any NA's in c
+  
+  c = c[!is.na(c)] # Remove them
+  
+} else {
+  
+  NULL
+  
+}
+
+# There is a function ifelse(), but use this for very simple expressions.
+
+ifelse(test = test, yes = c[!is.na(c)], no = NULL)         # The argument structure of this makes long conditional scripts cumbersome.
+
+# 
+
+
+# LOOPS -----------------------------------------------------------------------------------------------------------------------------------------------
+
+# FOR -----------------------------------------------------------------------------------------------------------------------------------------------
+
+# This is the simplest loop. It states "For all elements in some index, do the following script that many times.
+
+for(i in 1:10){
+  print("Hello!")
+}
+
+# Note that i is an object that can be used like any other. USE this to change the behavior of the for loop through elements of some structure!
+
+output = matrix(data = NA, nrow = 20, ncol = 10)
+
+means = seq(0, length.out = ncol(output))
+sd = 1
+
+for(i in 1:ncol(output)){
+  
+  mean = means[i]
+  
+  output[,i] = rnorm(n = nrow(output), mean = mean, sd = sd)
+  
+}
+
+# Exercise : We just simulated data with means increasing by 1 per column. Take the column means to see if we did this correctly
+
+# # # 
+
+# We can use if() statements inside for loops. What should we see in the following loop?
+
+for(i in 1:10){
+  
+  if(i == 5){
+    print(i)
+  } 
+  
+}
+
+# We can decide to skip elements conditionally using `next`. NOW what should we see?
+
+for(i in 1:10){
+  
+  if(i == 5){
+    next
+  } else {
+      print(i)
+    }
+  
+}
+
+# WHILE -----------------------------------------------------------------------------------------------------------------------------------------------
+
+# Perform a section of script over and over until a condition is met.
+# Calculate pi to 1 digits using monte carlo method
+
+test = FALSE
+points_in = 0
+points_out = 0
+
+set.seed(1) # Set a reproducible outcome. Anything (random) run after this will always produce the same output.
+
+rpois(n = 5, lambda = 10) # 8, 10, 7, 11, 14; always
+
+while(!test){
+  
+  point = c(runif(n = 1, min = -0.5, max = 0.5),
+             runif(n = 1, min = -0.5, max = 0.5))
+  
+  point_dist = sqrt(point[1]^2 + point[2]^2)
+  
+  if(point_dist < 0.5){
+    points_in = points_in + 1
+  } else {
+    points_out = points_out + 1
+  }
+  
+  message(paste0("Points in: ", points_in, "\nPoints out: ", points_out))
+  
+  pi_hat = 4 * (points_in / (points_in + points_out))
+  
+  message(paste0("pi_hat = ", pi_hat))
+  
+  test = abs(pi_hat - pi) < 0.001
+  
+}
+
+# REPEAT -----------------------------------------------------------------------------------------------------------------------------------------------
+
+# Repeat does something repeatedly until a condition is met. This is very similar to 'while', except this is more useful in doing something indefinitely.
+# I have a repeat function that uploads files to a cloud drive every 15 minutes; there's no terminating condition.
+
+# The example here does implement an end condition, using `break`
+
+repeat(
+  {
+    sample = rpois(n = 1, lambda = 8)
+    print(sample)
+    if(sample > 10){break}
+  }
+)
+
+# FOREACH ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+# This will automatically install the package for you if you don't have it.
+if(!require(foreach)){install.packages('foreach')}
+
+# Operates mostly similar to for(), but handles output automatically, defaulting to a list for every index
+
+foreach(i = 1:10) %do%{
+  print(i)
+}
+
+# Let's recall the data we simulated earlier
+
+output = matrix(data = NA, nrow = 20, ncol = 10)
+
+means = seq(0, length.out = ncol(output))
+sd = 1
+
+set.seed(1)
+
+for(i in 1:ncol(output)){
+  
+  mean = means[i]
+  
+  output[,i] = rnorm(n = nrow(output), mean = mean, sd = sd)
+  
+}
+
+# To do the same here, we don't even need to create the output matrix. We do need to specify that the output from each 
+
+# Set a seed to compare them.
+
+set.seed(1)
+
+output_foreach = foreach(i = 1:10, .combine = cbind) %do% {
+  
+  out = rnorm(n = 20, mean = means[i], sd = sd)
+  
+}
+
+all(output == output_foreach)
+
+# They are the same thing, but foreach is a little simpler to write. 
+
+# The drawbacks of foreach are that it is a little more difficult to implement
+# inside another function; you can't use the standard debugger to step through
+# and see what is going wrong. 
+
+# The pros of foreach are greater than the drawbacks, in my opinion:
+# Parallelizing is made extremely simple. For instance, the above can be done as such:
+
+if(!require(doParallel)){install.packages('doParallel')}
+
+registerDoParallel(cores = 4) # Register four cores to operate 
+
+output_foreach_par = foreach(i = 1:10, .combine = cbind) %dopar% { # Do the following 4 indices at a time
+  out = rnorm(n = 20, mean = means[i], sd = sd)
+}
+
+registerDoSEQ() # Turn off parallel to free up resources. Always good to do after parallel operations, doesn't hurt.
+
+# Such an example is NOT efficient, but if you have a really long operation per index that are independent, foreach will speed things up tremendously.
+# However, there is rather expensive overhead in setting up all the CPU's and sending them information that doesn't exist in serial operations.
+
+# Parallelize when:
+# * Operations each individually take hours
+# * Operations are independent
+# * Many indices that are better done simultaneously.
+
+# Times NOT to parallelize:
+# * Short operation per index (on the order of seconds to minutes)
+# * Not a whole lot of indices
+# * Operations depend on previous indices
+
+# Functions ---------------------------------------------------------------------------------------------------------------------
+
+# Not really logic, but good to know if time allows and follows naturally from control flow statements.
+
+# In R, everything is an object, even a function. Try typing a function name without parentheses
+
+xor
+
+# We can see the function definition, because it's stored as a particular object. 
+
+# We can define our own functions. What is a function? A function is a bunch of
+# lines of code that is executed when the function is called, optionally taking
+# arguments.
+
+# What is the structure of a function? We've been using them all along:
+
+# Function_name( argument1 = DEFAULT_VALUE, argument2 = DEFAULT_VALUE_2, ..., argumentN) { 
+#       body_of_function
+#       return(output)
+# }
+# 
+
+# Arguments can be set with default values, or not. 
+# If there exists something in the body of the function that is not supplied as an argument, the function will look to the global environment for it.
+# Good practice to return exactly what you want.
+
+# Run the following to define a function. What does this one do?
+
+test_func = function(a, b){
+  
+  do_something = a + b
+  
+  return(do_something)
+  
+}
+
+test_func(a = 1, b = 2)
+
+# The function sums a and b, and returns that output.
+# We can put anything we want into the function to execute. 
+
+# Benefits of using a function:
+# * No side effects. Notice that `do_something` isn't in our environment. That means no matter what objects we make in the function, we can't accidentally rewrite things in our global environment. Good safety feature! 
+# * Use with foreach or other parallelizing functions to perform a function many times at once with different inputs
+# * Tuck functions away in their own script for neatness. Also, can use Rstudio debugger!
+# * Debugger: insert `browser()` anywhere in the function to debug; ONLY if sourced from another script!
+
+
+# Example of debugging
+
+source('functions.R') # Notice that we have a new function, a function summarizing random integers.
+
+summarizePois(mean = 5, n_numbers = 20, n_replicates = 10, debug = T)
+
+# Exercise : Write your own function to summarize a vector of numbers.

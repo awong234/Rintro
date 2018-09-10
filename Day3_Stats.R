@@ -19,8 +19,16 @@ var(CO2[CO2$conc=="95",]$uptake)
 mode <- function(x) { # to calculate the most common value
   tab <- table(x) # count the frequency of each unique value
   index.of.max<-nnet:::which.is.max(tab) #find the index of the value with max freq
-  as.integer(names(tab)[nnet:::which.is.max(tab)]) # turn the value into an integer
+  as.numeric(names(tab)[nnet:::which.is.max(tab)]) # turn the value into an integer
 }
+
+# Alternative way to define mode using base functions - very similar logic
+
+Mode <- function(x) {
+  ux <- unique(x) # What are the unique values? 
+  return(ux[which.max(tabulate(match(x, ux)))]) # Which one of the unique values has the most occurrences? First one encountered is spit out, so ties are not handled elegantly.
+}
+
 mode(CO2$uptake)
 
 ### Probability Distributions ####
@@ -71,6 +79,10 @@ newPredictions<-predict(CO2.mod2,predictCO2)
 # is variation in uptake due to variation in conc, type, or both?
 CO2.aov2 <- aov(uptake ~ conc+Type, data = CO2)
 summary(CO2.aov2)
+
+ggplot(data = CO2) + 
+  geom_point(aes(x = conc, y = uptake)) + 
+  geom_smooth(aes(x = conc, y = uptake), method = 'lm', formula = y ~ log(x))
 
 
 ### Exercises
