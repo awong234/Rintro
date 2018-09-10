@@ -75,26 +75,63 @@ summary(CO2.aov2)
 
 ### Exercises
 # Day 4: Statistics
-  # 1) do a linear regression on the dataset::trees with girth and height and volume, with whatever hypothesis you can come up with
+  # 1) do a linear regression on the datasets::trees with girth and height and volume, with whatever hypothesis you can come up with
+    trees<-datasets::trees
+    ggplot()+
+      geom_point(data=trees,aes(x=Girth,y=Height,color=Volume))
+    ggplot()+
+      geom_point(data=trees,aes(x=Girth,y=Volume))
+    cor(trees$Girth,trees$Volume)
+    tree.Hyp1<-lm(Volume~Girth,data=trees)
+    summary(tree.Hyp1)
   # 2) based on your regression, predict new values of your response variable given new values of your explanatory variables
+    predictVol<-data.frame(Girth = seq(21,40,length=20))
+    newPredictions<-predict(tree.Hyp1,predictVol)
+    predictVol<-cbind(predictVol,newPredictions)
+    ggplot()+
+      geom_smooth(data=trees,aes(x=Girth,y=Volume),method="lm",se=TRUE,fullrange=TRUE,level=0.95)+
+      geom_point(data=trees,aes(x=Girth,y=Volume,color=))+
+      geom_point(data=predictVol, aes(x=Girth,y=newPredictions),pch=17,col="red")
+    
   # 3) create a vector called "age" that has 20 random values drawn from a uniform distribution from 21 to 30.
+      age<-round(runif(20,min=21,max=30),0)
 # Day 1: Assignment, subsetting
-  # 4) Look at the sleep dataset from datasets:sleep 
+  # 4) Look at the sleep dataset from datasets:sleep
+      sleep<-datasets::sleep
+      head(sleep)
+      str(sleep)
   # 5) How many extra hours, on average did everyone sleep?
+      mean(sleep$extra)
   # 6) How many extra hours, on average, did people given Drug 1 sleep? 
+      mean(sleep[sleep$group==1,]$extra)
   # 7) Use the cbind() function to add "age" from Exercise 3 to the datasets:sleep
+      sleep<-cbind(sleep,age)
   # 8) Create another column to sleep, called 'More' and fill it with NA's. 
+      sleep<-cbind(sleep,rep(NA, dim(sleep)[1]))
+      colnames(sleep)[ncol(sleep)]<-"More"
+      str(sleep)
   # 8) Create a list where the first item is the ID column, the second item is the drug column, the third item is the extra hours of sleep, and the fourth item is the age
+      sleepList<-list(ID=sleep$ID,group=sleep$group,hours=sleep$extra,age=sleep$age)
 # Day 2: Logic, Loops, Functions
   #9) Use the for loop to go through each row(i.e., person) of your sleep dataset. 
   #   If the person slept more hours (positive value for 'extra'), assign them a 1 in the 'More' column
   #   Else, assign them a 0 in the 'More' column   
+      for(i in 1:nrow(sleep)){
+        if(sleep[i,]$extra>0){
+          sleep[i,"More"]<-1} else{
+            sleep[i,"More"]<-0
+          }
+      }
 # Day 3: Plotting
   #10 Use this skeleton to plot the distribution of sleep per group.
-ggplot()+
-  geom_density(data=,aes(,col=))
+ggplot(data=sleep)+
+  geom_density(aes(x=age,linetype=group))
   #11 Color the distributions and give them some transparency
 ggplot()+
-  geom_density(data=,aes(,col=,fill=),alpha=)
+  geom_density(data=sleep,aes(x=age,linetype=group,fill=group),alpha=0.4)
+
   #12 Maually change the group colors to magenta and orange
 
+ggplot()+
+  geom_density(data=sleep,aes(x=age,linetype=group,fill=group),alpha=0.4)+
+  scale_fill_manual( values = c("magenta","orange"))
