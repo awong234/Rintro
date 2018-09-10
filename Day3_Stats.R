@@ -85,7 +85,7 @@ ggplot(data = CO2) +
   geom_smooth(aes(x = conc, y = uptake), method = 'lm', formula = y ~ log(x))
 
 
-### Exercises
+### Exercises with Answers
 # Day 4: Statistics
   # 1) do a linear regression on the datasets::trees with girth and height and volume, with whatever hypothesis you can come up with
     trees<-datasets::trees
